@@ -1,24 +1,45 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>حاسبة نقاط التميز العلمي - الدورة 15 (جدول محدث)</title>
+<title>Scientific Excellence Calculator - Cycle 15</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
-  body{font-family:'Tajawal',Arial,sans-serif;background:#f4f6f8;color:#0f1724;padding:18px;direction:rtl;min-height:100vh;display:flex;flex-direction:column}
-  .card{background:#fff;border-radius:10px;padding:16px;margin:12px auto;max-width:1250px;box-shadow:0 6px 18px rgba(15,23,36,0.06);width:100%;box-sizing:border-box;}
-  h1{margin:0 0 8px;font-size:20px;color:#1e293b}
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap');
+  body{font-family:'Inter',Arial,sans-serif;background:#f4f6f8;color:#0f1724;padding:18px;direction:ltr;min-height:100vh;display:flex;flex-direction:column}
+  .card{background:#fff;border-radius:10px;padding:16px;margin:12px auto;max-width:1300px;box-shadow:0 6px 18px rgba(15,23,36,0.06);width:100%;box-sizing:border-box;}
+  h1{margin:0 0 8px;font-size:22px;color:#1e293b}
   table{width:100%;border-collapse:separate;border-spacing:0;margin-top:12px;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden}
-  th,td{border-bottom:1px solid #e2e8f0;border-left:1px solid #e2e8f0;padding:8px;text-align:right;font-size:13px}
-  th:last-child, td:last-child {border-left:none;}
-  th{background:#f8fafc;font-weight:700;color:#334155}
-  input[type="text"], input[type="number"], select{width:100%;padding:6px;border:1px solid #cbd5e1;border-radius:6px;font-size:13px;box-sizing:border-box;font-family:'Tajawal',sans-serif;}
+  th,td{border-bottom:1px solid #e2e8f0;border-right:1px solid #e2e8f0;padding:8px;text-align:center;font-size:13px;vertical-align:middle;}
+  th:last-child, td:last-child {border-right:none;}
+  th{background:#f8fafc;font-weight:700;color:#334155;white-space:nowrap;}
+  
+  /* Inputs */
+  input[type="text"], input[type="number"], select{width:100%;padding:6px;border:1px solid #cbd5e1;border-radius:6px;font-size:13px;box-sizing:border-box;font-family:'Inter',sans-serif;}
   input:focus, select:focus {outline:2px solid #2563eb;border-color:#2563eb;}
-  .btn{display:inline-block;padding:8px 14px;border-radius:6px;border:none;background:#2563eb;color:#fff;cursor:pointer;font-weight:600;margin:6px 6px 0 0;transition:0.2s}
+  
+  /* Number styling for visibility */
+  input[type="number"], input.participation, input.thresholdPoints, input.normalizedPoints {
+      text-align: center;
+      font-weight: 800;
+      font-size: 15px;
+      color: #0f1724;
+  }
+  
+  /* Highlight Results */
+  input.thresholdPoints { color: #2563eb !important; background-color: #eff6ff !important; font-size: 16px !important; }
+  input.normalizedPoints { color: #059669 !important; background-color: #ecfdf5 !important; font-size: 16px !important; }
+
+  /* Title Input */
+  input.title { font-size: 13px; text-align: left; }
+
+  .btn{display:inline-block;padding:8px 14px;border-radius:6px;border:none;background:#2563eb;color:#fff;cursor:pointer;font-weight:600;margin:0 6px 6px 0;transition:0.2s}
   .btn:hover{background:#1d4ed8}
   .btn.secondary{background:#0ea5a4}
   .btn.secondary:hover{background:#0d9488}
+  .btn.danger{background:#ef4444}
+  .btn.danger:hover{background:#dc2626}
+  
   .muted{color:#64748b;font-size:13px;line-height:1.5}
   .result{margin-top:16px;padding:16px;border-radius:8px;background:#f8fafc;border:1px solid #e2e8f0}
   .ok{background:#dcfce7;color:#166534;border:1px solid #86efac;padding:10px;border-radius:6px;margin-top:8px}
@@ -26,9 +47,8 @@
   .small{font-size:12px;color:#64748b}
   .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;padding-bottom:12px;border-bottom:1px solid #e2e8f0}
   
-  /* Table Inputs Specifics */
-  .journalCell select {min-width: 180px;}
-  input.researchGrade, input.journalGrade {background-color: #f1f5f9; font-weight: bold;}
+  /* Table Specifics */
+  .journalCell select {min-width: 140px; font-size: 12px;}
   
   footer{text-align:center;font-size:12px;color:#94a3b8;margin-top:auto;padding-top:20px}
   
@@ -42,14 +62,14 @@
 </head>
 <body>
   <div class="card">
-   <h1>حاسبة نقاط تقييم الأبحاث للترقيات — الدورة 15</h1>
-   <p class="muted">حساب نقاط تقييم الأبحاث وفقاً لقواعد الدورة الخامسة عشرة وجدول تقييم المجلات المحدث.</p>
+   <h1>Scientific Excellence Calculator - Cycle 15</h1>
+   <p class="muted">Calculator for promotion points based on Cycle 15 regulations and updated journal grading table.</p>
 
     <div class="actions">
-      <button id="addRowBtn" class="btn">إضافة بحث جديد +</button>
-      <button id="exportCSV" class="btn secondary">تصدير CSV</button>
-      <button id="printBtn" class="btn secondary">طباعة التقرير</button>
-      <button id="resetBtn" class="btn" style="background:#ef4444">إعادة ضبط الكل</button>
+      <button id="addRowBtn" class="btn">Add Paper +</button>
+      <button id="exportCSV" class="btn secondary">Export CSV</button>
+      <button id="printBtn" class="btn secondary">Print Report</button>
+      <button id="resetBtn" class="btn danger">Reset All</button>
     </div>
 
     <div style="overflow-x:auto;">
@@ -57,20 +77,20 @@
         <thead>
           <tr>
             <th width="3%">#</th>
-            <th width="20%">عنوان البحث</th>
-            <th width="15%">نوع المجلة</th>
-            <th width="8%">التخصص</th>
-            <th width="8%">نوع التقييم</th>
-            <th width="5%">درجة البحث</th>
-            <th width="5%">درجة المجلة</th>
-            <th width="5%">عدد الباحثين</th>
-            <th width="8%">ترتيبك</th>
+            <th width="25%">Paper Title</th> <!-- WIDENED -->
+            <th width="12%">Journal Type</th> <!-- SHRUNK -->
+            <th width="8%">Specialty</th>
+            <th width="8%">Eval Type</th>
+            <th width="5%">Paper Score</th>
+            <th width="5%">Journal Score</th>
+            <th width="5%">Authors</th>
+            <th width="8%">Position</th>
             <th width="4%">Top 1%</th>
-            <th width="5%">نسبة المشاركة</th>
+            <th width="5%">Share %</th>
             <th width="4%">CNCI >1</th>
-            <th width="5%">نقاط التميز</th>
-            <th width="5%">النقاط (المعادلة)</th>
-            <th width="5%">حذف</th>
+            <th width="5%">Exc. Pts</th>
+            <th width="5%">Norm. Pts</th>
+            <th width="3%">Del</th>
           </tr>
         </thead>
         <tbody id="tbody"></tbody>
@@ -80,12 +100,12 @@
     <div class="result" id="summary">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap; gap:20px;">
         <div style="flex:1; min-width:200px;">
-          <div class="small">مجموع نقاط التميز (شرط المادة 23 — الحد الأدنى 60):</div>
-          <div style="font-size:24px;font-weight:700;color:#2563eb" id="sumThreshold">0.00</div>
+          <div class="small">Total Excellence Points (Min 60):</div>
+          <div style="font-size:28px;font-weight:800;color:#2563eb" id="sumThreshold">0.00</div>
         </div>
         <div style="flex:1; min-width:200px;">
-          <div class="small">المجموع الكلي (المعادلة الجديدة للترقية):</div>
-          <div style="font-size:24px;font-weight:700;color:#0ea5a4;text-align:left;direction:ltr" id="sumNormalized">0.00</div>
+          <div class="small">Total Promotion Points:</div>
+          <div style="font-size:28px;font-weight:800;color:#059669;text-align:left;" id="sumNormalized">0.00</div>
         </div>
       </div>
       <div id="resultMsg"></div>
@@ -93,51 +113,51 @@
     </div>
   </div>
 
-  <footer>Designed by: Dr. Ensaf H. Mohamed</footer>
+  <footer>Designed & Updated for Cycle 15</footer>
 
 <script>
-// 1. DATABASE CONFIGURATION (UPDATED TABLE)
+// 1. DATABASE CONFIGURATION (English Keys)
 const gradesDB = {
   // Grade 10.0
-  "WoS Q1 - Top 10%|متخصص": { researchGrade: 100, journalGrade: 10 },
-  "WoS Q1 - (Other)|متخصص": { researchGrade: 90, journalGrade: 10 },
+  "WoS Q1 - Top 10%|Specialized": { researchGrade: 100, journalGrade: 10 },
+  "WoS Q1 - (Other)|Specialized": { researchGrade: 90, journalGrade: 10 },
   
   // Grade 9.5
-  "WoS Q2|متخصص": { researchGrade: 80, journalGrade: 9.5 },
-  "Scopus Top 10% (Class A)|متخصص": { researchGrade: 80, journalGrade: 9.5 },
+  "WoS Q2|Specialized": { researchGrade: 80, journalGrade: 9.5 },
+  "Scopus Top 10% (Class A)|Specialized": { researchGrade: 80, journalGrade: 9.5 },
   
   // Grade 9.0
-  "Scopus Q1|متخصص": { researchGrade: 75, journalGrade: 9.0 },
+  "Scopus Q1|Specialized": { researchGrade: 75, journalGrade: 9.0 },
   
   // Grade 8.5
-  "WoS Q3|متخصص": { researchGrade: 70, journalGrade: 8.5 },
+  "WoS Q3|Specialized": { researchGrade: 70, journalGrade: 8.5 },
   
   // Grade 8.0
-  "Scopus Q2|متخصص": { researchGrade: 70, journalGrade: 8.0 },
+  "Scopus Q2|Specialized": { researchGrade: 70, journalGrade: 8.0 },
   
   // Grade 7.5
-  "WoS Q4|متخصص": { researchGrade: 65, journalGrade: 7.5 },
-  "Scopus Q3|متخصص": { researchGrade: 65, journalGrade: 7.5 },
+  "WoS Q4|Specialized": { researchGrade: 65, journalGrade: 7.5 },
+  "Scopus Q3|Specialized": { researchGrade: 65, journalGrade: 7.5 },
   
   // Grade 7.0
-  "Scopus Q4|متخصص": { researchGrade: 60, journalGrade: 7.0 },
-  "ESCI (WoS/Scopus Emerging)|متخصص": { researchGrade: 60, journalGrade: 7.0 },
+  "Scopus Q4|Specialized": { researchGrade: 60, journalGrade: 7.0 },
+  "ESCI (WoS/Scopus Emerging)|Specialized": { researchGrade: 60, journalGrade: 7.0 },
   
-  // غير متخصص (للرجوع إليها)
-  "WoS Q1|غير متخصص": { researchGrade: 0, journalGrade: 6 },
-  "WoS Q2|غير متخصص": { researchGrade: 0, journalGrade: 5.5 },
-  "WoS Q3|غير متخصص": { researchGrade: 0, journalGrade: 4 },
-  "WoS Q4|غير متخصص": { researchGrade: 0, journalGrade: 3 },
-  "Scopus Q1|غير متخصص": { researchGrade: 0, journalGrade: 5 },
-  "Scopus Q2|غير متخصص": { researchGrade: 0, journalGrade: 4.5 },
-  "Scopus Q3|غير متخصص": { researchGrade: 0, journalGrade: 3.5 },
-  "Scopus Q4|غير متخصص": { researchGrade: 0, journalGrade: 2.5 },
-  "Evaluation (Other)|غير متخصص": { researchGrade: 0, journalGrade: 0 }
+  // Non-Specialized (For reference/fallback)
+  "WoS Q1|Non-Specialized": { researchGrade: 0, journalGrade: 6 },
+  "WoS Q2|Non-Specialized": { researchGrade: 0, journalGrade: 5.5 },
+  "WoS Q3|Non-Specialized": { researchGrade: 0, journalGrade: 4 },
+  "WoS Q4|Non-Specialized": { researchGrade: 0, journalGrade: 3 },
+  "Scopus Q1|Non-Specialized": { researchGrade: 0, journalGrade: 5 },
+  "Scopus Q2|Non-Specialized": { researchGrade: 0, journalGrade: 4.5 },
+  "Scopus Q3|Non-Specialized": { researchGrade: 0, journalGrade: 3.5 },
+  "Scopus Q4|Non-Specialized": { researchGrade: 0, journalGrade: 2.5 },
+  "Evaluation (Other)|Non-Specialized": { researchGrade: 0, journalGrade: 0 }
 };
 
 const journalOptions = Object.keys(gradesDB).map(k=>{
   const [label,spec]=k.split('|');
-  return {key:k,label:label+" — "+spec};
+  return {key:k,label:label}; // spec is redundant in label for English layout to save space
 });
 
 const tbody=document.getElementById('tbody');
@@ -161,20 +181,20 @@ function createRow(data={},idx){
   const tr=document.createElement('tr');
   tr.innerHTML=`
   <td>${idx}</td>
-  <td><input type="text" class="title" value="${data.title||''}" placeholder="عنوان البحث..."></td>
+  <td><input type="text" class="title" value="${data.title||''}" placeholder="Paper title..."></td>
   <td class="journalCell"></td>
-  <td><select class="spec"><option>متخصص</option><option>غير متخصص</option></select></td>
-  <td><select class="evalType"><option value="excellence">تميز علمي</option><option value="evaluation">تقييم</option></select></td>
+  <td><select class="spec"><option value="Specialized">Specialized</option><option value="Non-Specialized">Non-Specialized</option></select></td>
+  <td><select class="evalType"><option value="excellence">Excellence</option><option value="evaluation">Evaluation</option></select></td>
   <td><input type="number" class="researchGrade" value="0"></td>
   <td><input type="number" class="journalGrade" value="0" readonly></td>
   <td><input type="number" class="numResearchers" value="${data.researchers||1}" min="1"></td>
-  <td><select class="position"><option value="first_last">الأول/الأخير</option><option value="middle">مشارك</option><option value="sole">منفرد</option></select></td>
+  <td><select class="position"><option value="first_last">First/Last</option><option value="middle">Co-author</option><option value="sole">Sole</option></select></td>
   <td><input type="checkbox" class="isTop1"${data.isTop1?' checked':''}></td>
   <td><input type="text" class="participation" readonly style="background:#eee;color:#333;text-align:center"></td>
   <td><input type="checkbox" class="cnci"${data.cnci?' checked':''}></td>
-  <td><input type="number" class="thresholdPoints" value="0" readonly style="color:#2563eb;font-weight:bold"></td>
-  <td><input type="number" class="normalizedPoints" value="0" readonly style="color:#0ea5a4;font-weight:bold"></td>
-  <td><button class="delBtn" style="background:#ef4444;padding:4px 8px;font-size:11px">X</button></td>`;
+  <td><input type="number" class="thresholdPoints" value="0" readonly></td>
+  <td><input type="number" class="normalizedPoints" value="0" readonly></td>
+  <td><button class="delBtn" style="background:#ef4444;color:white;border:none;border-radius:4px;cursor:pointer;padding:4px 8px;">X</button></td>`;
   
   const journalCell=tr.querySelector('.journalCell');
   const sel=createSelectJournal(data.journalKey||journalOptions[2].key); // Default to WoS Q2
@@ -182,20 +202,20 @@ function createRow(data={},idx){
   
   const specSel=tr.querySelector('.spec');
   // Initialize spec based on Key
-  specSel.value = sel.value.split('|')[1] || 'متخصص';
+  specSel.value = sel.value.split('|')[1] || 'Specialized';
 
   const researchInput = tr.querySelector('.researchGrade');
   const evalTypeSel = tr.querySelector('.evalType');
 
-  // وظيفة تحديث الدرجات
+  // Update Grades Function
   function refreshGrades(){
     const key=sel.value;
     const base=gradesDB[key]||{researchGrade:0,journalGrade:0};
     const evalType=evalTypeSel.value;
-    const isSpec=specSel.value==='متخصص';
+    const isSpec=specSel.value==='Specialized';
     const label=key.split('|')[0];
     
-    // شرط التميز العلمي:
+    // Excellence Eligibility Check:
     const isEligible = isSpec && (
         label.includes('WoS Q1') || 
         label.includes('WoS Q2') || 
@@ -203,7 +223,7 @@ function createRow(data={},idx){
         label.includes('Scopus Top 10%')
     );
 
-    // منطق التميز vs التقييم
+    // Excellence vs Evaluation Logic
     if(evalType==='excellence'){
         if(isEligible) {
             researchInput.value = base.researchGrade;
@@ -216,10 +236,10 @@ function createRow(data={},idx){
             researchInput.style.backgroundColor = "#e2e8f0";
         }
     } else {
-        // حالة التقييم: إدخال يدوي
+        // Manual Entry
         researchInput.readOnly = false;
         researchInput.style.backgroundColor = "#fff";
-        researchInput.placeholder = "أدخل الدرجة";
+        researchInput.placeholder = "Score";
     }
     
     tr.querySelector('.journalGrade').value=base.journalGrade;
@@ -227,7 +247,11 @@ function createRow(data={},idx){
 
   // Event Listeners
   sel.onchange = () => {
-      specSel.value = sel.value.split('|')[1] || 'متخصص';
+      // Auto-update spec dropdown based on journal choice
+      const keyParts = sel.value.split('|');
+      if(keyParts.length > 1) {
+          specSel.value = keyParts[1];
+      }
       refreshGrades(); calculateAll();
   };
   specSel.onchange=evalTypeSel.onchange=()=>{refreshGrades();calculateAll();};
@@ -256,53 +280,36 @@ function calculateAll(){
     const top=tr.querySelector('.isTop1').checked;
     const cnci=tr.querySelector('.cnci').checked;
 
-// --- منطق نسبة المشاركة (المادة 22) ---
-let part = 0;
+    // --- Participation Logic (Article 22) ---
+    let part = 0;
+    
+    // Is Journal 10 points?
+    const isTenPoints = (jg === 10);
 
-// هل المجلة 10 نقاط؟
-const isTenPoints = (jg === 10);
-
-// 1️⃣ حالات 100% دائمًا بغض النظر عن العدد
-if (
-    top ||                 // مجلة ضمن أعلى 1%
-    pos === 'sole' ||      // الباحث الوحيد في تخصصه
-    pos === 'first_last'   // الأول أو الأخير
-) {
-    part = 1.0;
-
-} else if (isTenPoints) {
-    // 2️⃣ مجلات 10 نقاط
-    if (n <= 4) {
+    // Cases that get 100% (1.0) ALWAYS:
+    if(top || n === 1 || pos === 'sole' || pos === 'first_last' || (isTenPoints && n <= 4)) {
         part = 1.0;
-    } else if (n === 5 || n === 6) {
-        part = 0.8;
     } else {
-        part = 0.6; // 7 فأكثر
+        if (isTenPoints) {
+            // 10-point journal with > 4 authors
+            if (n === 5 || n === 6) part = 0.8;
+            else part = 0.6; // 7+
+        } else {
+            // Regular journals
+            if (n === 2) part = 0.8;
+            else if (n === 3) part = 0.55;
+            else if (n === 4) part = 0.55;
+            else part = 0.50; // 5+
+        }
     }
-
-} else {
-    // 3️⃣ مجلات عادية (أقل من 10 نقاط)
-    if (n === 1) {
-        part = 1.0;        // عمليًا متخصص وحيد
-    } else if (n === 2) {
-        part = 0.8;
-    } else if (n === 3) {
-        part = 0.7;
-    } else if (n === 4) {
-        part = 0.55;
-    } else {
-        part = 0.4;        // 5 فأكثر
-    }
-}
-
 
     // CNCI Bonus
     const bonus=(cnci && rg > 0)?1:0;
     
-    // نقاط التميز
+    // Excellence Points
     const th = Math.min(25, (rg * part) + bonus);
     
-    // المعادلة
+    // Normalized Points (Formula)
     const norm = ((rg * part * jg) / 50) + bonus;
 
     tr.querySelector('.participation').value=Math.round(part*100)+'%';
@@ -312,8 +319,8 @@ if (
     const spec=tr.querySelector('.spec').value;
     const evalType=tr.querySelector('.evalType').value;
     
-    // الجمع التراكمي
-    if(spec==='متخصص'){
+    // Summation
+    if(spec==='Specialized'){
         totalN+=norm;
         if(evalType==='excellence') totalT+=th;
     }
@@ -323,14 +330,14 @@ if (
   sumNormalizedEl.textContent=totalN.toFixed(2);
   
   if(totalT >= 60) {
-      resultMsg.innerHTML=`<div class="ok">✅ <b>مبروك!</b> استوفيت شرط نقاط التميز (${totalT.toFixed(2)} ≥ 60)</div>`;
+      resultMsg.innerHTML=`<div class="ok">✅ <b>Congratulations!</b> Excellence condition met (${totalT.toFixed(2)} ≥ 60)</div>`;
   } else {
-      resultMsg.innerHTML=`<div class="warn">⚠️ <b>تنبيه:</b> مجموع نقاط التميز ${totalT.toFixed(2)} أقل من 60 نقطة المطلوبة.</div>`;
+      resultMsg.innerHTML=`<div class="warn">⚠️ <b>Notice:</b> Excellence points (${totalT.toFixed(2)}) are below the required 60.</div>`;
   }
 }
 
 function exportCSV(){
-  const rows=[["#","عنوان","نوع","تخصص","التقييم","درجة بحث","درجة مجلة","باحثين","نسبة","CNCI","تميز","معدل"]];
+  const rows=[["#","Title","Journal","Specialty","Type","Score","J.Score","Authors","Pos","Top1%","Share","CNCI","Exc.Pts","Norm.Pts"]];
   [...tbody.children].forEach((tr,i)=>{
     rows.push([
         i+1,
@@ -341,29 +348,36 @@ function exportCSV(){
         tr.querySelector('.researchGrade').value,
         tr.querySelector('.journalGrade').value,
         tr.querySelector('.numResearchers').value,
+        tr.querySelector('.position').value,
+        tr.querySelector('.isTop1').checked?'Yes':'No',
         tr.querySelector('.participation').value,
-        tr.querySelector('.cnci').checked?'نعم':'لا',
+        tr.querySelector('.cnci').checked?'Yes':'No',
         tr.querySelector('.thresholdPoints').value,
         tr.querySelector('.normalizedPoints').value
     ]);
   });
-  const csv="\uFEFF" + rows.map(r=>r.join(',')).join('\n');
-  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);a.download='excellence_points.csv';a.click();
-  pageMsg.textContent="تم حفظ ملف CSV بنجاح ✅";
+  const csv="data:text/csv;charset=utf-8," + rows.map(r=>r.join(',')).join('\n');
+  const encodedUri = encodeURI(csv);
+  const link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", "excellence_points.csv");
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  
+  pageMsg.textContent="CSV exported successfully ✅";
   setTimeout(()=>pageMsg.textContent="", 3000);
 }
 
 function init(){
-  addResearchRow({title:"بحث مثال (Scopus Top 10%)", journalKey:"Scopus Top 10% (Class A)|متخصص", researchers: 1});
+  addResearchRow({title:"Example Paper (Scopus Top 10%)", journalKey:"Scopus Top 10% (Class A)|Specialized", researchers: 1});
   document.getElementById('addRowBtn').onclick=()=>{addResearchRow({});calculateAll();};
   document.getElementById('exportCSV').onclick=exportCSV;
   document.getElementById('printBtn').onclick=()=>window.print();
   document.getElementById('resetBtn').onclick=()=>{
-    if(confirm('هل أنت متأكد من حذف جميع البيانات؟')){
+    if(confirm('Are you sure you want to reset all data?')){
         tbody.innerHTML='';addResearchRow({});calculateAll();
-        pageMsg.textContent="تمت إعادة الضبط ✅";
+        pageMsg.textContent="Reset Complete ✅";
         setTimeout(()=>pageMsg.textContent="", 3000);
     }
   };

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Scientific Research Evaluation Points Calculator for Promotion to Professor and Associate Professor – Cycle 15</title>
+<title>Scientific Research Evaluation Points Calculator – Cycle 15 (Updated)</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   body {
@@ -20,7 +20,7 @@
     border-radius: 12px;
     padding: 20px;
     margin: 0 auto 20px;
-    max-width: 1350px; /* Slightly wider to accommodate data */
+    max-width: 1400px;
     width: 100%;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     box-sizing: border-box;
@@ -29,11 +29,11 @@
   .muted { color: #64748b; font-size: 14px; margin-bottom: 20px; }
   
   /* Table Styling */
-  .table-wrapper { overflow-x: auto; border-radius: 8px; border: 1px solid #e2e8f0; }
-  table { width: 100%; border-collapse: collapse; min-width: 1000px; }
+  .table-wrapper { overflow-x: auto; border-radius: 8px; border: 1px solid #e2e8f0; min-height: 300px; }
+  table { width: 100%; border-collapse: collapse; min-width: 1100px; }
   th, td {
     border-bottom: 1px solid #e2e8f0;
-    border-right: 1px solid #e2e8f0; /* LTR borders */
+    border-right: 1px solid #e2e8f0;
     padding: 8px 10px;
     text-align: left;
     font-size: 13px;
@@ -51,33 +51,41 @@
   }
   input:focus, select:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1); }
 
-  /* SHRINK LOGIC: Specific Column Widths */
+  /* Column Widths */
   .col-idx { width: 40px; text-align: center; }
-  .col-title { width: 180px; } /* Shrunk */
-  .col-journal { width: 160px; } /* Shrunk */
-  .col-spec { width: 90px; }
+  .col-title { width: 180px; }
+  .col-journal { width: 220px; }
+  .col-spec { width: 100px; }
   .col-eval { width: 90px; }
-  .col-grade-sm { width: 60px; }
+  .col-grade-sm { width: 85px; } /* Widened for calc button */
   .col-num { width: 60px; }
   .col-rank { width: 100px; }
   .col-check { width: 50px; text-align: center; }
   .col-result { width: 80px; }
   
-  /* Compact Inputs for Shrunk Columns */
-  .col-journal select {
-    width: 100%;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-  }
+  /* Compact Inputs */
+  .col-journal select { width: 100%; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
 
   /* Enhanced Number Visualization */
   input.grade-display {
-    background-color: #f1f5f9;
+    text-align: center;
     font-weight: 600;
     color: #334155;
-    text-align: center;
   }
+  
+  /* State: Fixed/ReadOnly */
+  input.grade-fixed {
+    background-color: #f1f5f9;
+    color: #64748b;
+    border-color: #e2e8f0;
+  }
+  /* State: Editable */
+  input.grade-editable {
+    background-color: #fff;
+    color: #0f1724;
+    border-color: #3b82f6; /* Blue border to indicate editability */
+  }
+
   input.result-display {
     border: 1px solid #94a3b8;
     background-color: #fff;
@@ -85,7 +93,6 @@
     font-size: 14px;
     text-align: center;
   }
-  /* Specific colors for results */
   .res-threshold { color: #2563eb; background: #eff6ff !important; border-color: #bfdbfe !important; }
   .res-norm { color: #059669; background: #ecfdf5 !important; border-color: #a7f3d0 !important; }
   .res-part { background: #f8fafc !important; color: #475569; }
@@ -103,6 +110,13 @@
   .btn.secondary:hover { background: #f1f5f9; }
   .btn.danger { background: #fee2e2; color: #991b1b; }
   .btn.danger:hover { background: #fecaca; }
+  .btn-calc {
+    background: #e2e8f0; color: #475569; border: 1px solid #cbd5e1;
+    padding: 2px 6px; font-size: 11px; border-radius: 4px; 
+    cursor: pointer; margin-left: 4px; display: none;
+  }
+  .btn-calc:hover { background: #cbd5e1; }
+  
   .del-btn {
     background: #ef4444; color: white; width: 24px; height: 24px;
     border: none; border-radius: 4px; cursor: pointer; display: flex;
@@ -134,8 +148,24 @@
   .actions { display: flex; gap: 8px; margin-bottom: 15px; }
   footer { text-align: center; font-size: 12px; color: #94a3b8; margin-top: auto; padding-top: 20px; }
 
+  /* Modal Styling */
+  .modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 1000;
+  }
+  .modal {
+    background: white; padding: 25px; border-radius: 12px;
+    width: 90%; max-width: 500px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  }
+  .modal h3 { margin-top: 0; color: #0f1724; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 15px; }
+  .criteria-list { display: flex; flex-direction: column; gap: 10px; }
+  .criteria-item { display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+  .criteria-item span { flex: 1; margin-right: 10px; }
+  .criteria-item input { width: 20px; height: 20px; }
+  .modal-footer { margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #e2e8f0; padding-top: 15px; }
+
   @media print {
-    .actions, .del-btn, footer { display: none !important; }
+    .actions, .del-btn, footer, .btn-calc { display: none !important; }
     body { background: #fff; padding: 0; }
     .card { box-shadow: none; border: none; margin: 0; padding: 0; max-width: 100%; }
     input, select { border: none; background: transparent; appearance: none; padding: 0; }
@@ -149,8 +179,8 @@
   <div class="card">
     <div style="display:flex; justify-content:space-between; align-items:center;">
       <div>
-        <h1>Scientific Research Evaluation Points Calculator for Promotion to Professor and Associate Professor – Cycle 15</h1>
-        <p class="muted">Research evaluation based on Cycle 15 rules & Updated Journal Matrix.</p>
+        <h1>Scientific Research Evaluation Points Calculator – Cycle 15</h1>
+        <p class="muted">Updated with Conference Criteria & Non-Classified Journal Calculator.</p>
       </div>
     </div>
 
@@ -167,11 +197,11 @@
           <tr>
             <th class="col-idx">#</th>
             <th class="col-title">Paper Title</th>
-            <th class="col-journal">Journal Type</th>
+            <th class="col-journal">Journal / Conference Type</th>
             <th class="col-spec">Specialty</th>
             <th class="col-eval">Eval Type</th>
             <th class="col-grade-sm">Paper<br>Grade</th>
-            <th class="col-grade-sm">Jrnl<br>Grade</th>
+            <th class="col-grade-sm">Journal<br>Grade</th>
             <th class="col-num">No.<br>Auth</th>
             <th class="col-rank">Your Rank</th>
             <th class="col-check">Top<br>1%</th>
@@ -206,65 +236,172 @@
 
   <footer>Designed based on Cycle 15 Regulations</footer>
 
+  <!-- Modal for Calculator -->
+  <div id="calcModal" class="modal-overlay">
+    <div class="modal">
+      <h3>Journal Grade Calculator (المجلات غير المصنفة)</h3>
+      <div class="criteria-list">
+        <div class="criteria-item">
+            <span>Issued by known scientific entity (دورية تصدر عن جهة علمية معروفة)</span>
+            <input type="checkbox" data-val="1.0">
+        </div>
+        <div class="criteria-item">
+            <span>Regular issuance (دورية منتظمة الإصدار)</span>
+            <input type="checkbox" data-val="1.0">
+        </div>
+        <div class="criteria-item">
+            <span>Indexed in databases (EKB, DOAJ) (دورية مكشفة)</span>
+            <input type="checkbox" data-val="1.0">
+        </div>
+        <div class="criteria-item">
+            <span>Blind Peer Review (دورية محكمة تحكيمًا أعمى)</span>
+            <input type="checkbox" data-val="1.0">
+        </div>
+        <div class="criteria-item">
+            <span>Specialized / Sections (دورية متخصصة)</span>
+            <input type="checkbox" data-val="1.0">
+        </div>
+        <div class="criteria-item">
+            <span>Electronic Management System (نظام إلكتروني للإدارة والتحكيم)</span>
+            <input type="checkbox" data-val="1.0">
+        </div>
+        <div class="criteria-item">
+            <span>Website with full papers (موقع إلكتروني للأبحاث)</span>
+            <input type="checkbox" data-val="0.5">
+        </div>
+        <div class="criteria-item">
+            <span>External Editors (يشارك في تحريرها علماء خارجيون)</span>
+            <input type="checkbox" data-val="0.5">
+        </div>
+      </div>
+      <div style="margin-top:15px; font-weight:700; display:flex; justify-content:space-between; color:#2563eb;">
+          <span>Total Score (Max 7.0):</span>
+          <span id="modalTotal">0.0</span>
+      </div>
+      <div class="modal-footer">
+        <button class="btn secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn" onclick="applyModalScore()">Apply Score</button>
+      </div>
+    </div>
+  </div>
+
 <script>
-// 1. DATABASE CONFIGURATION (English Keys)
-// Maps journal types to [Paper Grade, Journal Grade]
+// 1. DATABASE CONFIGURATION
+// Structure: Key -> { fixed: boolean, specialized: {r, j}, general: {r, j}, isConf: boolean, isManual: boolean }
 const gradesDB = {
-  // Grade 10.0
-  "WoS Q1 - Top 10%|Specialized": { researchGrade: 100, journalGrade: 10 },
-  "WoS Q1 - (Other)|Specialized": { researchGrade: 90, journalGrade: 10 },
+  // --- JOURNALS (Q1-Q4) ---
+  "WoS Q1": {
+    fixed: true,
+    specialized: { research: 100, journal: 10.0 },
+    general:     { research: 0,   journal: 9.0 }
+  },
+  "WoS Q2 / Scopus Top 10%": {
+    fixed: true,
+    specialized: { research: 80, journal: 9.5 },
+    general:     { research: 0,  journal: 8.5 }
+  },
+  "Scopus Q1 (Standard)": {
+    fixed: true,
+    specialized: { research: 75, journal: 9.0 },
+    general:     { research: 0,  journal: 8.5 }
+  },
+  "WoS Q3 / Scopus Q2": {
+    fixed: false,
+    specialized: { research: 70, journal: 8.5 },
+    general:     { research: 0,  journal: 8.0 }
+  },
+  "WoS Q4 / Scopus Q3": {
+    fixed: false,
+    specialized: { research: 65, journal: 8.0 },
+    general:     { research: 0,  journal: 7.5 }
+  },
+  "Scopus Q4": {
+    fixed: false,
+    specialized: { research: 60, journal: 7.5 },
+    general:     { research: 0,  journal: 7.0 }
+  },
   
-  // Grade 9.5
-  "WoS Q2|Specialized": { researchGrade: 80, journalGrade: 9.5 },
-  "Scopus Top 10% (Class A)|Specialized": { researchGrade: 80, journalGrade: 9.5 },
-  
-  // Grade 9.0
-  "Scopus Q1|Specialized": { researchGrade: 75, journalGrade: 9.0 },
-  
-  // Grade 8.5
-  "WoS Q3|Specialized": { researchGrade: 70, journalGrade: 8.5 },
-  
-  // Grade 8.0
-  "Scopus Q2|Specialized": { researchGrade: 70, journalGrade: 8.0 },
-  
-  // Grade 7.5
-  "WoS Q4|Specialized": { researchGrade: 65, journalGrade: 7.5 },
-  "Scopus Q3|Specialized": { researchGrade: 65, journalGrade: 7.5 },
-  
-  // Grade 7.0
-  "Scopus Q4|Specialized": { researchGrade: 60, journalGrade: 7.0 },
-  "ESCI (WoS/Scopus Emerging)|Specialized": { researchGrade: 60, journalGrade: 7.0 },
-  
-  // Non-Specialized (For reference/Manual entry)
-  "WoS Q1|General": { researchGrade: 0, journalGrade: 6 },
-  "WoS Q2|General": { researchGrade: 0, journalGrade: 5.5 },
-  "WoS Q3|General": { researchGrade: 0, journalGrade: 4 },
-  "WoS Q4|General": { researchGrade: 0, journalGrade: 3 },
-  "Scopus Q1|General": { researchGrade: 0, journalGrade: 5 },
-  "Scopus Q2|General": { researchGrade: 0, journalGrade: 4.5 },
-  "Scopus Q3|General": { researchGrade: 0, journalGrade: 3.5 },
-  "Scopus Q4|General": { researchGrade: 0, journalGrade: 2.5 },
-  "Evaluation (Other)|General": { researchGrade: 0, journalGrade: 0 }
+  // --- CONFERENCES (Table 3) ---
+  "Conf: Intl Specialized Scopus/WoS (Q4 equiv) (7.5)": {
+    fixed: false, // Paper grade needs eval
+    isConf: true,
+    specialized: { research: 60, journal: 7.5 }, // Default research 60?
+    general:     { research: 0,  journal: 7.5 }
+  },
+  "Conf: Classified Specialized (Pub + Full Rev) (6.5)": {
+    fixed: false,
+    isConf: true,
+    specialized: { research: 0, journal: 6.5 },
+    general:     { research: 0, journal: 6.5 }
+  },
+  "Conf: Classified Specialized (Full Rev) (5.0)": {
+    fixed: false,
+    isConf: true,
+    specialized: { research: 0, journal: 5.0 },
+    general:     { research: 0, journal: 5.0 }
+  },
+  "Conf: Unclassified Specialized (Abs Rev) (4.5)": {
+    fixed: false,
+    isConf: true,
+    specialized: { research: 0, journal: 4.5 },
+    general:     { research: 0, journal: 4.5 }
+  },
+  "Conf: Classified Non-Spec (Abs Rev) (4.0)": {
+    fixed: false,
+    isConf: true,
+    specialized: { research: 0, journal: 4.0 },
+    general:     { research: 0, journal: 4.0 }
+  },
+  "Conf: Classified Specialized (Unpub + Full Rev) (4.0)": {
+    fixed: false,
+    isConf: true,
+    specialized: { research: 0, journal: 4.0 },
+    general:     { research: 0, journal: 4.0 }
+  },
+  "Conf: Unclassified Specialized (Abs Rev - Type 2) (2.5)": {
+    fixed: false,
+    isConf: true,
+    specialized: { research: 0, journal: 2.5 },
+    general:     { research: 0, journal: 2.5 }
+  },
+  "Conf: Unclassified Specialized (Pub + Full Rev) (2.0)": {
+    fixed: false,
+    isConf: true,
+    specialized: { research: 0, journal: 2.0 },
+    general:     { research: 0, journal: 2.0 }
+  },
+  "Conf: Unclassified Non-Spec (Abs Rev) (1.0)": {
+    fixed: false,
+    isConf: true,
+    specialized: { research: 0, journal: 1.0 },
+    general:     { research: 0, journal: 1.0 }
+  },
+
+  // --- NON-CLASSIFIED JOURNAL (Table 2) ---
+  "Non-Classified Journal (Manual Calc)": {
+    fixed: false,
+    isManual: true,
+    specialized: { research: 0, journal: 0.0 }, // Journal grade calculated manually
+    general:     { research: 0, journal: 0.0 }
+  }
 };
 
-const journalOptions = Object.keys(gradesDB).map(k => {
-  const [label, spec] = k.split('|');
-  return { key: k, label: label };
-});
-
+const journalOptions = Object.keys(gradesDB);
 const tbody = document.getElementById('tbody');
 const sumThresholdEl = document.getElementById('sumThreshold');
 const sumNormalizedEl = document.getElementById('sumNormalized');
 const resultMsg = document.getElementById('resultMsg');
 const pageMsg = document.getElementById('pageMsg');
+const calcModal = document.getElementById('calcModal');
+let activeCalcRow = null;
 
 function createSelectJournal(selectedKey) {
   const s = document.createElement('select');
-  journalOptions.forEach(opt => {
+  journalOptions.forEach(key => {
     const o = document.createElement('option');
-    o.value = opt.key;
-    o.textContent = opt.label;
-    if (opt.key === selectedKey) o.selected = true;
+    o.value = key;
+    o.textContent = key;
+    if (key === selectedKey) o.selected = true;
     s.appendChild(o);
   });
   return s;
@@ -276,10 +413,13 @@ function createRow(data = {}, idx) {
     <td class="col-idx">${idx}</td>
     <td class="col-title"><input type="text" class="title" value="${data.title||''}" placeholder="Paper title..."></td>
     <td class="col-journal"></td>
-    <td class="col-spec"><select class="spec"><option value="Specialized">Specialized</option><option value="General">General</option></select></td>
+    <td class="col-spec"><select class="spec"><option value="specialized">Specialized</option><option value="general">General</option></select></td>
     <td class="col-eval"><select class="evalType"><option value="excellence">Excellence</option><option value="evaluation">Evaluation</option></select></td>
-    <td class="col-grade-sm"><input type="number" class="researchGrade grade-display" value="0"></td>
-    <td class="col-grade-sm"><input type="number" class="journalGrade grade-display" value="0" readonly></td>
+    <td class="col-grade-sm"><input type="number" class="researchGrade grade-display" value="0" min="0" max="100" step="1"></td>
+    <td class="col-grade-sm" style="display:flex; align-items:center;">
+        <input type="number" class="journalGrade grade-display" value="0" readonly style="width:50px">
+        <button class="btn-calc" type="button">Calc</button>
+    </td>
     <td class="col-num"><input type="number" class="numResearchers" value="${data.researchers||1}" min="1" style="text-align:center"></td>
     <td class="col-rank">
         <select class="position">
@@ -296,61 +436,69 @@ function createRow(data = {}, idx) {
     <td class="col-check"><button class="del-btn">×</button></td>`;
   
   const journalCell = tr.querySelector('.col-journal');
-  // Default to WoS Q2 if not provided
-  const defaultKey = journalOptions.find(o => o.key.includes("WoS Q2"))?.key || journalOptions[0].key;
-  const sel = createSelectJournal(data.journalKey || defaultKey); 
+  const defaultKey = data.journalKey || "WoS Q3 / Scopus Q2";
+  const sel = createSelectJournal(defaultKey); 
   journalCell.appendChild(sel);
   
   const specSel = tr.querySelector('.spec');
-  // Initialize spec based on Key
-  specSel.value = sel.value.split('|')[1] || 'Specialized';
-
   const researchInput = tr.querySelector('.researchGrade');
-  const evalTypeSel = tr.querySelector('.evalType');
+  const journalInput = tr.querySelector('.journalGrade');
+  const calcBtn = tr.querySelector('.btn-calc');
 
-  // Logic to update grades based on selection
+  // --- REFRESH LOGIC ---
   function refreshGrades() {
     const key = sel.value;
-    const base = gradesDB[key] || { researchGrade: 0, journalGrade: 0 };
-    const evalType = evalTypeSel.value;
-    const isSpec = specSel.value === 'Specialized';
-    const label = key.split('|')[0];
+    const spec = specSel.value; 
+    const entry = gradesDB[key];
     
-    // Eligibility for "Excellence" (Must be Specialized and Q1/Q2/Top10)
-    const isEligible = isSpec && (
-        label.includes('WoS Q1') || 
-        label.includes('WoS Q2') || 
-        label.includes('Scopus Q1') || 
-        label.includes('Scopus Top 10%')
-    );
+    if (!entry) return;
 
-    if (evalType === 'excellence') {
-        if (isEligible) {
-            researchInput.value = base.researchGrade;
-            researchInput.readOnly = true;
-            researchInput.style.backgroundColor = "#f1f5f9";
-            researchInput.placeholder = "";
-        } else {
-            researchInput.value = 0;
-            researchInput.readOnly = true;
-        }
+    const values = entry[spec];
+
+    // 1. Research Grade Logic
+    // Only lock if it's a "Fixed" tier (Top journals) AND Specialized
+    if (entry.fixed && spec === 'specialized') {
+        researchInput.value = values.research;
+        researchInput.readOnly = true;
+        researchInput.className = "researchGrade grade-display grade-fixed"; 
     } else {
-        // Evaluation mode: Manual entry
         researchInput.readOnly = false;
-        researchInput.style.backgroundColor = "#fff";
+        researchInput.className = "researchGrade grade-display grade-editable";
+        
+        // Suggest value if 0 and exists in DB
+        if (parseFloat(researchInput.value) === 0 && values.research > 0) {
+            researchInput.value = values.research;
+        }
     }
     
-    tr.querySelector('.journalGrade').value = base.journalGrade;
+    // 2. Journal Grade Logic
+    if (entry.isManual) {
+        // Non-Classified Manual
+        calcBtn.style.display = 'inline-block';
+        journalInput.readOnly = true; // Read only, set by calc
+        journalInput.className = "journalGrade grade-display grade-editable";
+        // Do not overwrite existing value if user already calculated
+    } else {
+        // Standard or Conference
+        calcBtn.style.display = 'none';
+        journalInput.value = values.journal;
+        journalInput.readOnly = true;
+        journalInput.className = "journalGrade grade-display grade-fixed";
+    }
   }
 
-  // Event Listeners
-  sel.onchange = () => {
-      specSel.value = sel.value.split('|')[1] || 'Specialized';
-      refreshGrades(); calculateAll();
+  // Calc Button Logic
+  calcBtn.onclick = () => {
+      activeCalcRow = tr;
+      openModal();
   };
-  specSel.onchange = evalTypeSel.onchange = () => { refreshGrades(); calculateAll(); };
+
+  // Event Listeners
+  sel.onchange = () => { refreshGrades(); calculateAll(); };
+  specSel.onchange = () => { refreshGrades(); calculateAll(); };
   
   researchInput.oninput = calculateAll;
+  tr.querySelector('.evalType').onchange = calculateAll;
   tr.querySelector('.numResearchers').oninput = calculateAll;
   tr.querySelector('.position').onchange = calculateAll;
   tr.querySelector('.isTop1').onchange = calculateAll;
@@ -382,39 +530,30 @@ function calculateAll() {
     const top = tr.querySelector('.isTop1').checked;
     const cnci = tr.querySelector('.cnci').checked;
 
-    // --- Participation Logic (Cycle 15 / Article 22) ---
     let part = 0;
-    const isTenPoints = (jg === 10);
+    const isTenPoints = (jg >= 9.9); // Approximate for 10.0
 
-    // 1. Always 100% Cases
     if (top || pos === 'sole' || pos === 'first_last') {
         part = 1.0;
     } 
-    // 2. High Impact Journals (10 pts)
     else if (isTenPoints) {
         if (n <= 4) part = 1.0;
         else if (n <= 6) part = 0.8;
-        else part = 0.6; // 7+
+        else part = 0.6; 
     } 
-    // 3. Standard Journals (< 10 pts)
     else {
         if (n === 1) part = 1.0;
         else if (n === 2) part = 0.8;
         else if (n === 3) part = 0.7;
         else if (n === 4) part = 0.55;
-        else part = 0.4; // 5+
+        else part = 0.4; 
     }
 
-    // CNCI Bonus
     const bonus = (cnci && rg > 0) ? 1 : 0;
     
-    // Excellence Threshold Calculation (Capped at 25 per paper usually, implemented here as standard formula)
-    // Formula: (Research Grade * Participation) + Bonus
     let th = (rg * part) + bonus;
-    if(th > 25) th = 25; // Cap per Article 23
+    if(th > 25) th = 25;
     
-    // Normalized Promotion Points
-    // Formula: ((Research Grade * Participation * Journal Grade) / 50) + Bonus
     const norm = ((rg * part * jg) / 50) + bonus;
 
     tr.querySelector('.participation').value = Math.round(part * 100) + '%';
@@ -424,8 +563,7 @@ function calculateAll() {
     const spec = tr.querySelector('.spec').value;
     const evalType = tr.querySelector('.evalType').value;
     
-    // Accumulate Totals
-    if (spec === 'Specialized') {
+    if (spec === 'specialized') {
         totalN += norm;
         if (evalType === 'excellence') totalT += th;
     }
@@ -440,6 +578,48 @@ function calculateAll() {
       resultMsg.innerHTML = `<div class="status-warn">⚠️ <b>Attention:</b> ${totalT.toFixed(2)} is below the required 60 points.</div>`;
   }
 }
+
+// --- MODAL LOGIC ---
+const checkboxes = document.querySelectorAll('#calcModal input[type="checkbox"]');
+const modalTotalEl = document.getElementById('modalTotal');
+
+function openModal() {
+    // Reset checks
+    checkboxes.forEach(cb => cb.checked = false);
+    updateModalTotal();
+    calcModal.style.display = 'flex';
+}
+
+function closeModal() {
+    calcModal.style.display = 'none';
+    activeCalcRow = null;
+}
+
+function updateModalTotal() {
+    let sum = 0;
+    checkboxes.forEach(cb => {
+        if(cb.checked) sum += parseFloat(cb.getAttribute('data-val'));
+    });
+    // Max 7.0
+    if(sum > 7.0) sum = 7.0;
+    modalTotalEl.textContent = sum.toFixed(1);
+}
+
+function applyModalScore() {
+    if(activeCalcRow) {
+        const score = parseFloat(modalTotalEl.textContent);
+        activeCalcRow.querySelector('.journalGrade').value = score;
+        calculateAll();
+    }
+    closeModal();
+}
+
+checkboxes.forEach(cb => cb.addEventListener('change', updateModalTotal));
+// Close if clicked outside
+calcModal.addEventListener('click', (e) => {
+    if(e.target === calcModal) closeModal();
+});
+
 
 function exportCSV() {
   const rows = [["#", "Title", "Journal", "Spec", "Type", "Grade", "J.Grade", "Auth", "Share", "CNCI", "Exc.Pts", "Promo.Pts"]];
@@ -463,17 +643,23 @@ function exportCSV() {
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'excellence_points_export.csv';
+  a.download = 'scientific_calc_export.csv';
   a.click();
   pageMsg.textContent = "CSV Exported Successfully ✅";
   setTimeout(() => pageMsg.textContent = "", 3000);
 }
 
 function init() {
-  // Example Row
   addResearchRow({
-      title: "Sample High Impact Paper", 
-      journalKey: "Scopus Top 10% (Class A)|Specialized", 
+      title: "Fixed Grade Example", 
+      journalKey: "WoS Q2 / Scopus Top 10%", 
+      researchers: 1,
+      isTop1: false
+  });
+
+  addResearchRow({
+      title: "Conference Example", 
+      journalKey: "Conf: Classified Specialized (Full Rev) (5.0)", 
       researchers: 1,
       isTop1: false
   });
@@ -494,5 +680,3 @@ init();
 </script>
 </body>
 </html>
-
-

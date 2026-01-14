@@ -292,40 +292,40 @@ const gradesDB = {
   // --- JOURNALS (Q1-Q4) ---
   "WoS Q1": {
     fixed: true,
-    specialized: { research: 100, journal: 10.0 },
-    general:     { research: 0,   journal: 9.0 }
+    specialized: { research: 100, journal: 10.0 }, // q1 specialized wos 10
+    general:     { research: 0,   journal: 9.0 }   // q1 wos unspecialized 9
   },
   "WoS Q2 / Scopus Top 10%": {
     fixed: true,
-    specialized: { research: 80, journal: 9.5 },
-    general:     { research: 0,  journal: 8.5 }
+    specialized: { research: 80, journal: 9.5 },   // q2 wos or q1 scopus top10 9.5 specialized
+    general:     { research: 0,  journal: 8.5 }    // q2 wos unspecialized 8.5
   },
   "Scopus Q1 (Standard)": {
     fixed: true,
     specialized: { research: 75, journal: 9.0 },
-    general:     { research: 0,  journal: 8.5 }
+    general:     { research: 0,  journal: 8.5 }    // q1 scopus unspecialized 8.5
   },
   "WoS Q3 / Scopus Q2": {
     fixed: false,
-    specialized: { research: 70, journal: 8.5 },
-    general:     { research: 0,  journal: 8.0 }
+    specialized: { research: 70, journal: 8.5 },   // q3 wos , q2 scopus specialized 8.5
+    general:     { research: 0,  journal: 8.0 }    // q3 wos , q2 scopus unspecialized 8
   },
   "WoS Q4 / Scopus Q3": {
     fixed: false,
-    specialized: { research: 65, journal: 8.0 },
-    general:     { research: 0,  journal: 7.5 }
+    specialized: { research: 65, journal: 8.0 },   // q4 wos , q3 scopus specialized 8
+    general:     { research: 0,  journal: 7.5 }    // q4 wos , q3 scopus unspecialized 7.5
   },
   "Scopus Q4": {
     fixed: false,
-    specialized: { research: 60, journal: 7.5 },
-    general:     { research: 0,  journal: 7.0 }
+    specialized: { research: 60, journal: 7.5 },   // q4 scopus specialized 7.5
+    general:     { research: 0,  journal: 7.0 }    // q4 scopus , unspecialized 7
   },
   
   // --- CONFERENCES (Table 3) ---
   "Conf: Intl Specialized Scopus/WoS (Q4 equiv) (7.5)": {
     fixed: false, // Paper grade needs eval
     isConf: true,
-    specialized: { research: 60, journal: 7.5 }, // Default research 60?
+    specialized: { research: 60, journal: 7.5 }, 
     general:     { research: 0,  journal: 7.5 }
   },
   "Conf: Classified Specialized (Pub + Full Rev) (6.5)": {
